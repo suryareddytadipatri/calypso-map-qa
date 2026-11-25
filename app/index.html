@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calypso Map Ticket Desk</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f6f8; }
+    .card { background: white; padding: 20px; border-radius: 8px; max-width: 500px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .hidden { display: none; }
+    input, select, button { display: block; width: 100%; margin: 10px 0; padding: 8px; }
+    button { background: #0052cc; color: white; border: none; cursor: pointer; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="login-section" class="card">
+    <h2>Calypso Operator Login</h2>
+    <label for="username">Operator ID</label>
+    <input id="username" placeholder="Enter Operator ID" />
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="Enter Password" />
+    <button id="login-btn" onclick="login()">Sign In</button>
+    <p id="login-error" style="color:red;"></p>
+  </div>
+
+  <!-- WORKSPACE SCREEN -->
+  <div id="workspace-section" class="card hidden">
+    <h2>Map Ticket Validation Workspace</h2>
+    <label for="ticket-id">Ticket ID</label>
+    <input id="ticket-id" placeholder="e.g., TKT-101" />
+    <button onclick="loadTicket()">Load Ticket</button>
+
+    <div id="ticket-details" class="hidden">
+      <p><strong>Concern Type:</strong> <span id="concern-type">Road Closure Addition</span></p>
+      <p><strong>Evidence Source:</strong> <span id="evidence-status">Latest Street View Verified</span></p>
+      <label for="action-select">Resolution Action</label>
+      <select id="action-select">
+        <option value="EDIT_COMMIT">Edit Map & Commit</option>
+        <option value="NO_EDIT">Resolve Without Edit</option>
+      </select>
+      <button id="commit-btn" onclick="commitTicket()">Commit Resolution</button>
+      <p id="status-msg" style="color:green; font-weight:bold;"></p>
+    </div>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if (user === 'surya_ops' && pass === 'Map@2026') {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('workspace-section').classList.remove('hidden');
+      } else {
+        document.getElementById('login-error').innerText = 'Invalid Operator Credentials';
+      }
+    }
+
+    function loadTicket() {
+      const id = document.getElementById('ticket-id').value;
+      const details = document.getElementById('ticket-details');
+      const evidence = document.getElementById('evidence-status');
+      const select = document.getElementById('action-select');
+      details.classList.remove('hidden');
+
+      if (id === 'TKT-404') {
+        evidence.innerText = 'No Supporting Street View / GIS Evidence';
+        select.value = 'NO_EDIT';
+        select.disabled = true;
+      } else {
+        evidence.innerText = 'Latest Street View & Satellite Verified';
+        select.value = 'EDIT_COMMIT';
+        select.disabled = false;
+      }
+    }
+
+    function commitTicket() {
+      const action = document.getElementById('action-select').value;
+      document.getElementById('status-msg').innerText =
+        action === 'NO_EDIT' ? 'Ticket Resolved Without Map Edits' : 'Map Edit Committed to Ledger';
+    }
+  </script>
+</body>
+</html>
